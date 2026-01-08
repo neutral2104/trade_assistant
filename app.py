@@ -104,3 +104,31 @@ st.metric("📅 Date", df_feat.index[-1].strftime("%Y-%m-%d"))
 
     
 st.metric("📈 Confidence", f"{round(conf*100, 2)} %")
+
+st.markdown("## 📉 Price Chart with Regime Overlay")
+
+plot_df = df_feat.copy()
+
+bull = plot_df["regime"] == 1
+bear = plot_df["regime"] == 0
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(14,6))
+
+# Price line
+ax.plot(plot_df.index, plot_df["close"], label="Price", color="white", alpha=0.8)
+
+# MA200
+ax.plot(plot_df.index, plot_df["ma_200"], label="MA200", color="orange", linestyle="--", alpha=0.8)
+
+# Regime dots
+ax.scatter(plot_df.index[bull], plot_df["close"][bull], color="green", s=8, label="Bull", alpha=0.7)
+ax.scatter(plot_df.index[bear], plot_df["close"][bear], color="red", s=8, label="Bear", alpha=0.7)
+
+ax.set_title(f"{asset_name} — Market Regime Overlay")
+ax.legend()
+ax.grid(alpha=0.2)
+
+st.pyplot(fig)
+
